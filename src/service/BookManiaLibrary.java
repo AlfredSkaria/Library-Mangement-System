@@ -7,6 +7,8 @@ import java.util.UUID;
 import Bean.Audio;
 import Bean.Book;
 import Bean.MediaItem;
+import exceptions.ItemException;
+import validator.DataValidator;
 
 public class BookManiaLibrary implements Library{
 	Scanner sc  = new Scanner(System.in);
@@ -17,7 +19,8 @@ public class BookManiaLibrary implements Library{
 	private int unique = 1;
 	private Book b1;
 	private String author,artist;
-	private static ArrayList<MediaItem> myList = new ArrayList<MediaItem>();
+	private static  ArrayList<MediaItem> myList = new ArrayList<MediaItem>();
+	DataValidator dv = new DataValidator();
 	
 	public BookManiaLibrary(Book b1,Audio a1) {
 		
@@ -26,11 +29,13 @@ public class BookManiaLibrary implements Library{
 	@Override
 	public void addItem(MediaItem item) {
 		myList.add(item);	
+		System.out.println("size"+myList.size());
 	}
 
 	@Override
-	public MediaItem searchItemById(String id) {
-		
+	public MediaItem searchItemById(String id) throws ItemException
+	{
+		System.out.println("size"+myList.size());
 	    for(MediaItem m : myList){
 	        if(m.getId() != null && m.getId().equals(id))
 	        {
@@ -47,9 +52,9 @@ public class BookManiaLibrary implements Library{
 	}
 
 	@Override
-	public boolean deleteItem(String id) {
+	public boolean deleteItem(String id) throws ItemException{
 	    for(MediaItem m : myList){
-	        if(m.getId() != null && m.getId().contains(id))
+	        if(m.getId() != null && m.getId().equals(id))
 	        {
 	        	myList.remove(m);
 	        }
@@ -59,13 +64,18 @@ public class BookManiaLibrary implements Library{
 	}
 
 	@Override
-	public MediaItem updateItem(MediaItem m3,String id) {
+	public MediaItem updateItem(MediaItem m3,String id)throws ItemException {
 		int choice;
 		this.id = id;
 		System.out.println("Book/Audio: (1/0)??");
 		choice = sc.nextInt();
 		System.out.println("Enter the title");	
 		title = sc.next();
+		while(!dv.validateTitle(title))
+		{
+			System.out.println("Please enter a title having length greater than 3 and having no special characters \nEnter the title");	
+			title = sc.next();
+		}
 		System.out.println("Enter the price");
 		price = sc.nextDouble();
 		System.out.println("Enter the year");
